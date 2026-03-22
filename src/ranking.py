@@ -51,13 +51,12 @@ def build_similarity_matrix(sequences_by_species: dict[str, str], use_progress: 
 
 def build_rank_matrix(similarity_df: pd.DataFrame) -> pd.DataFrame:
     """
-    По матрице сходства строит матрицу рангов родственности.
+    Строит матрицу рангов родственности.
 
-    Для каждой строки:
-    - 1 означает максимальную близость
-    - большее число означает меньшую близость
-
-    Диагональ всегда равна 1.
+    Правила:
+    - диагональ всегда = 1
+    - остальные организмы ранжируются по убыванию сходства
+    - меньший ранг = большее сходство
     """
     species_names = list(similarity_df.index)
 
@@ -69,9 +68,17 @@ def build_rank_matrix(similarity_df: pd.DataFrame) -> pd.DataFrame:
     )
 
     for species_name in species_names:
-        row_scores = similarity_df.loc[species_name].sort_values(ascending=False)
+        # берем сходства, кроме самого себя
+        row = similarity_df.loc[species_name].drop(index=species_name)
 
-        for rank_value, other_species_name in enumerate(row_scores.index, start=1):
-            rank_df.loc[species_name, other_species_name] = rank_value
+        # сортируем по убыванию сходства
+        sorted_species = row.sort_values(ascending=False).index.tolist()
+
+        # сам с собой — всегда 1
+        rank_df.loc[species_name, species_name] = 1
+
+        # остальные — начиная с 2
+        for rank, other_species in enumerate(sorted_species, start=2):
+            rank_df.loc[species_name, other_species] = rank
 
     return rank_df
