@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+from typing import Union
 
 
 def extract_species_name(header_line: str) -> str:
@@ -26,7 +27,7 @@ def extract_species_name(header_line: str) -> str:
     return clean_header
 
 
-def read_fna_records(file_path: str | Path) -> list[tuple[str, str, str]]:
+def read_fna_records(file_path: Union[str, Path]) -> list[tuple[str, str, str]]:
     """
     Читает все FASTA-записи из .fna файла.
 
@@ -88,7 +89,7 @@ def read_fna_records(file_path: str | Path) -> list[tuple[str, str, str]]:
     return records
 
 
-def read_fna_file(file_path: str | Path) -> tuple[str, str]:
+def read_fna_file(file_path: Union[str, Path]) -> tuple[str, str]:
     """
     Читает .fna файл и возвращает одну 대표- последовательность для организма.
 
@@ -105,7 +106,7 @@ def read_fna_file(file_path: str | Path) -> tuple[str, str]:
     return species_name, sequence
 
 
-def load_sequences_from_folder(folder_path: str | Path) -> dict[str, str]:
+def load_sequences_from_folder(folder_path: Union[str, Path]) -> dict[str, str]:
     """
     Читает все .fna файлы из папки и возвращает словарь:
     {
@@ -144,7 +145,7 @@ def load_sequences_from_folder(folder_path: str | Path) -> dict[str, str]:
     return sequences_by_species
 
 
-def build_sequences_info(sequences_by_species: dict[str, str]) -> list[dict[str, int | str]]:
+def build_sequences_info(sequences_by_species: dict[str, str]) -> list[dict[str, Union[int, str]]]:
     """
     Возвращает список словарей с краткой информацией по считанным последовательностям.
     """
